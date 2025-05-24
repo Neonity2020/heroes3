@@ -51,6 +51,11 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			.return-to-home {
+				text-align: center;
+				display: block;
+				margin-top: 2em;
+			}
 		</style>
 	</head>
 
@@ -77,6 +82,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 						<hr />
 					</div>
 					<slot />
+				</div>
+				<div class="return-to-home">
+					<a href="/blog">返回博客列表</a>
 				</div>
 			</article>
 		</main>

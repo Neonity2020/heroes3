@@ -7,7 +7,14 @@ import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 
 const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	(a, b) => {
+		if (a.data.onTop && !b.data.onTop) return -1;
+		if (!a.data.onTop && b.data.onTop) return 1;
+		if (a.data.order && !b.data.order) return -1;
+		if (!a.data.order && b.data.order) return 1;
+		if (a.data.order && b.data.order) return a.data.order - b.data.order;
+		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+	},
 );
 ---
 
@@ -61,8 +68,18 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				color: rgb(var(--gray));
 			}
+			.info {
+				display: flex;
+				gap: 0.5rem;
+				align-items: center;
+			}
+			.series {
+				margin: 0;
+				color: rgb(var(--gray));
+			}
 			ul li a:hover h4,
-			ul li a:hover .date {
+			ul li a:hover .date,
+			ul li a:hover .series {
 				color: rgb(var(--accent));
 			}
 			ul a:hover img {
@@ -96,9 +113,14 @@ const posts = (await getCollection('blog')).sort(
 								<a href={`/blog/${post.id}/`}>
 									<img width={720} height={360} src={post.data.heroImage} alt="" />
 									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
+									<div class="info">
+										<p class="date">
+											<FormattedDate date={post.data.pubDate} />
+										</p>
+										<p class="series">
+											{post.data.series}
+										</p>
+									</div>
 								</a>
 							</li>
 						))
