@@ -134,6 +134,25 @@ hr {
 	main {
 		padding: 1em;
 	}
+	h1 {
+		font-size: 2em;
+	}
+	h2 {
+		font-size: 1.6em;
+	}
+	h3 {
+		font-size: 1.3em;
+	}
+	.prose p {
+		margin-bottom: 1.5em;
+	}
+	pre {
+		padding: 1em;
+	}
+	blockquote {
+		font-size: 1.1em;
+		padding: 0 0 0 15px;
+	}
 }
 
 .sr-only {
