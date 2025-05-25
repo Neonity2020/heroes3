@@ -34,3 +34,59 @@ npm uninstall @astrojs/image
 
 ---
 
+_**User**_
+
+For the code present, we get this error:
+```
+不能将类型“{ src: ImageMetadata; alt: string; webp: boolean; }”分配给类型“IntrinsicAttributes & Props”。
+  类型“IntrinsicAttributes & Props”上不存在属性“webp”。
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+这个错误是因为`Image`组件不再支持`webp`属性。Astro 的图片组件已经简化，默认会处理图片优化。
+
+修改`src/pages/index.astro`文件：
+```language=astro:src/pages/index.astro
+// 删除 webp={true}
+<Image src={cover} alt="英雄无敌3 博客" />
+```
+
+Astro 会自动处理图片格式优化，包括生成 webp 版本，所以不需要手动指定。
+
+---
+
+_**User**_
+
+For the code present, we get this error:
+```
+不能将类型“{ src: ImageMetadata; alt: string; style: string; caption: string; }”分配给类型“IntrinsicAttributes & Props”。
+  类型“IntrinsicAttributes & Props”上不存在属性“caption”。
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+这个错误是因为`Image`组件不支持`caption`属性。如果需要添加图片说明，可以改用`figure`标签包裹图片。
+
+修改`src/pages/index.astro`文件：
+```language=astro:src/pages/index.astro
+<figure>
+    <Image
+        src={cover}
+        alt="英雄无敌3 博客"
+        style="width: 100%; height: auto;"
+    />
+    <figcaption>英雄无敌3 博客</figcaption>
+</figure>
+```
+
+这样既保持了图片的样式，又能正确显示图片说明。
+
+---
+
