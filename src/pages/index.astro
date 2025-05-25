@@ -7,13 +7,13 @@ import { Image } from 'astro:assets';
 import cover from '../../public/chronicles_cover.webp';
 import { getCollection } from 'astro:content';
 const posts = await getCollection('blog');
-const recentPosts = posts
+const allPosts = posts
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
-  .slice(0, 4)
   .map(post => ({
     ...post,
     slug: post.id.replace('blog/', '')
   }));
+const initialPosts = allPosts.slice(0, 4);
 ---
 
 <!doctype html>
@@ -44,8 +44,8 @@ const recentPosts = posts
 
 			<section class="recent-updates">
 				<h2>最近更新</h2>
-				<div class="update-grid">
-					{recentPosts.map((post) => (
+				<div class="update-grid" id="posts-grid">
+					{initialPosts.map((post) => (
 						<article class="update-item">
 							<a href={`/blog/${post.slug}`}>
 								{post.data.heroImage && (
@@ -62,7 +62,64 @@ const recentPosts = posts
 						</article>
 					))}
 				</div>
+				{allPosts.length > initialPosts.length && (
+					<button 
+						class="load-more"
+						id="load-more-btn"
+					>
+						显示更多
+					</button>
+				)}
 			</section>
+
+			<Fragment set:html={`
+				<script>
+					window.allPosts = ${JSON.stringify(allPosts)};
+				</script>
+			`} />
+
+			<script>
+				const grid = document.getElementById('posts-grid');
+				const loadMoreBtn = document.getElementById('load-more-btn');
+				let visibleCount = 4;
+
+				if (loadMoreBtn && grid) {
+					loadMoreBtn.addEventListener('click', () => {
+						const nextPosts = window.allPosts.slice(visibleCount, visibleCount + 4);
+						nextPosts.forEach((post: { 
+							slug: string; 
+							data: { 
+								heroImage?: string; 
+								title: string; 
+								description: string 
+							} 
+						}) => {
+							const article = document.createElement('article');
+							article.className = 'update-item';
+							article.innerHTML = `
+								<a href="/blog/${post.slug}">
+									${post.data.heroImage ? `
+										<img
+											src="${post.data.heroImage}"
+											alt="${post.data.title}"
+											style="width: 100%; height: auto;"
+										/>
+									` : ''}
+									<h3>${post.data.title}</h3>
+									<p>${post.data.description}</p>
+								</a>
+							`;
+							grid.appendChild(article);
+						});
+
+						visibleCount += 4;
+						if (visibleCount >= window.allPosts.length) {
+							loadMoreBtn.style.display = 'none';
+						}
+					});
+				}
+			</script>
+
 			<p>
 				<a href="/blog">查看所有文章</a>
 			</p>
@@ -128,6 +185,20 @@ const recentPosts = posts
 					margin: 0 1rem 1rem;
 					color: rgba(var(--text), 0.8);
 					font-size: 0.9rem;
+				}
+				.load-more {
+					display: block;
+					margin: 2rem auto 0;
+					padding: 0.75rem 2rem;
+					background-color: rgba(var(--accent), 0.1);
+					color: rgb(var(--accent));
+					border: 1px solid rgba(var(--accent), 0.2);
+					border-radius: 4px;
+					cursor: pointer;
+					transition: 0.2s ease;
+				}
+				.load-more:hover {
+					background-color: rgba(var(--accent), 0.2);
 				}
 			</style>
 		</main>
