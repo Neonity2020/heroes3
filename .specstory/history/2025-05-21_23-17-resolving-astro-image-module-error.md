@@ -90,3 +90,103 @@ _**Assistant**_
 
 ---
 
+_**User**_
+
+For the code present, we get this error:
+```
+算术运算右侧必须是 "any"、"number"、"bigint" 或枚举类型。
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+这个错误是因为在排序时直接对`Date`对象进行了减法运算。需要先将日期转换为时间戳再进行计算。
+
+修改`src/pages/index.astro`文件中的排序逻辑：
+```language=astro:src/pages/index.astro
+const recentPosts = posts
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 4);
+```
+
+通过`getTime()`方法将日期转换为时间戳（毫秒数），这样就可以进行正常的数值比较了。
+
+---
+
+_**User**_
+
+For the code present, we get this error:
+```
+类型“{ id: string; body?: string | undefined; collection: "blog"; data: { title: string; description: string; pubDate: Date; updatedDate?: Date | undefined; heroImage?: string | undefined; onTop?: boolean | undefined; series?: string | undefined; order?: number | undefined; }; rendered?: RenderedContent | undefined; file...”上不存在属性“slug”。
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+这个错误是因为`getCollection`返回的post对象没有`slug`属性。需要使用`getEntryBySlug`或手动生成slug。
+
+修改`src/pages/index.astro`文件：
+```language=language=astro:src/pages/index.astro
+const recentPosts = posts
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 4)
+  .map(post => ({
+    ...post,
+    slug: post.id.replace('blog/', '')
+  }));
+```
+
+然后在模板中使用：
+```language=language=astro:src/pages/index.astro
+<a href={`/blog/${post.slug}`}>
+```
+
+这样就能正确生成并访问文章的slug了。
+
+---
+
+_**User**_
+
+For the code present, we get this error:
+```
+不能将类型“{ src: string; alt: string; style: string; }”分配给类型“IntrinsicAttributes & Props”。
+  不能将类型“{ src: string; alt: string; style: string; }”分配给类型“IntrinsicAttributes & { [x: `data-${string}`]: any; 'class:list'?: string | Record<string, boolean> | Record<any, any> | Iterable<string> | Iterable<...> | undefined; ... 209 more ...; inferSize?: false | undefined; }”。
+```
+How can I resolve this? If you propose a fix, please make it concise.
+
+---
+
+_**Assistant**_
+
+这个错误是因为`Image`组件的属性类型不匹配。需要确保`post.data.heroImage`是`ImageMetadata`类型，而不是字符串。
+
+修改`src/pages/index.astro`文件中的图片处理部分：
+```language=language=astro:src/pages/index.astro
+{post.data.heroImage && (
+  <Image
+    src={post.data.heroImage}
+    alt={post.data.title}
+    width={400}
+    height={300}
+  />
+)}
+```
+
+主要修改：
+1. 移除`style`属性
+2. 添加`width`和`height`属性
+3. 确保`post.data.heroImage`是正确导入的图片资源
+
+如果`heroImage`是字符串路径，需要先导入图片资源：
+```language=language=astro:src/pages/index.astro
+import heroImage from '../assets/hero.jpg';
+```
+
+然后在文章数据中使用导入的图片资源。
+
+---
+

@@ -5,6 +5,15 @@ import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { Image } from 'astro:assets';
 import cover from '../../public/chronicles_cover.webp';
+import { getCollection } from 'astro:content';
+const posts = await getCollection('blog');
+const recentPosts = posts
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 4)
+  .map(post => ({
+    ...post,
+    slug: post.id.replace('blog/', '')
+  }));
 ---
 
 <!doctype html>
@@ -22,9 +31,6 @@ import cover from '../../public/chronicles_cover.webp';
 			<p>
 				这里是英雄无敌3爱好者博客，记录了英雄无敌3的剧情攻略、心得技巧、mod、精品资源等。
 			</p>
-			<p>
-				<a href="/blog">查看所有文章</a>
-			</p>
 			<figure>
 				<a href="/blog/chronicles">
 					<Image
@@ -35,6 +41,31 @@ import cover from '../../public/chronicles_cover.webp';
 					<figcaption style="text-align: center;">英雄无敌3 历代记</figcaption>
 				</a>
 			</figure>
+
+			<section class="recent-updates">
+				<h2>最近更新</h2>
+				<div class="update-grid">
+					{recentPosts.map((post) => (
+						<article class="update-item">
+							<a href={`/blog/${post.slug}`}>
+								{post.data.heroImage && (
+									<Image
+										src={post.data.heroImage}
+										alt={post.data.title}
+										width={400}
+										height={300}
+									/>
+								)}
+								<h3>{post.data.title}</h3>
+								<p>{post.data.description}</p>
+							</a>
+						</article>
+					))}
+				</div>
+			</section>
+			<p>
+				<a href="/blog">查看所有文章</a>
+			</p>
 			<style>
 				a {
 					text-decoration: none;
@@ -69,6 +100,34 @@ import cover from '../../public/chronicles_cover.webp';
 				.title {
 					display: inline-block;
 					margin-top: 0.5rem;
+				}
+				.recent-updates {
+					margin: 2rem 0;
+				}
+				.update-grid {
+					display: grid;
+					grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+					gap: 1.5rem;
+					margin-top: 1rem;
+				}
+				.update-item {
+					border: 1px solid rgba(var(--text), 0.1);
+					border-radius: 8px;
+					overflow: hidden;
+					transition: 0.2s ease;
+				}
+				.update-item:hover {
+					transform: translateY(-4px);
+					box-shadow: var(--box-shadow);
+				}
+				.update-item h3 {
+					margin: 1rem 1rem 0.5rem;
+					font-size: 1.1rem;
+				}
+				.update-item p {
+					margin: 0 1rem 1rem;
+					color: rgba(var(--text), 0.8);
+					font-size: 0.9rem;
 				}
 			</style>
 		</main>
