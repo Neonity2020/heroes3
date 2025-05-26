@@ -96,19 +96,33 @@ const initialPosts = allPosts.slice(0, 4);
 						}) => {
 							const article = document.createElement('article');
 							article.className = 'update-item';
+							article.style.transition = '0.2s ease';
+							article.style.border = '1px solid rgba(var(--text), 0.1)';
+							article.style.borderRadius = '8px';
+							article.style.overflow = 'hidden';
 							article.innerHTML = `
 								<a href="/blog/${post.slug}">
 									${post.data.heroImage ? `
 										<img
 											src="${post.data.heroImage}"
 											alt="${post.data.title}"
+											width="400"
+											height="300"
 											style="width: 100%; height: auto;"
 										/>
 									` : ''}
-									<h3>${post.data.title}</h3>
-									<p>${post.data.description}</p>
+									<h3 style="margin: 1rem 1rem 0.5rem; font-size: 1.1rem;">${post.data.title}</h3>
+									<p style="margin: 0 1rem 1rem; color: rgba(var(--text), 0.8); font-size: 0.9rem;">${post.data.description}</p>
 								</a>
 							`;
+							article.addEventListener('mouseenter', () => {
+								article.style.transform = 'translateY(-4px)';
+								article.style.boxShadow = 'var(--box-shadow)';
+							});
+							article.addEventListener('mouseleave', () => {
+								article.style.transform = 'none';
+								article.style.boxShadow = 'none';
+							});
 							grid.appendChild(article);
 						});
 
