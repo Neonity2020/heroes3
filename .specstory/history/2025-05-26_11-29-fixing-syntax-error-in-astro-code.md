@@ -30,3 +30,27 @@ _**Assistant**_
 
 ---
 
+_**User**_
+
+icon使用.ico文件
+
+---
+
+_**Assistant**_
+
+根据你的需求，我们需要将 `.svg` 图标改为 `.ico` 文件。以下是修改后的代码：
+
+```language=astro:src/components/BaseHead.astro
+// ... existing code ...
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+// ... existing code ...
+```
+
+修改说明：
+1. 将 `type="image/svg+xml"` 改为 `type="image/x-icon"`，因为这是 `.ico` 文件的正确 MIME 类型
+2. 保持 `href="/favicon.ico"` 不变，因为文件扩展名已经是 `.ico`
+
+确保你的 `public` 目录下有一个 `favicon.ico` 文件。如果文件路径不同，请相应调整 `href` 属性。
+
+---
+
